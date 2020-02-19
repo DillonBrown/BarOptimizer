@@ -15,8 +15,11 @@ import java.util.ListIterator;
  */
 public class Runner {
     
-    private final int[] maleBars = {275,255,225,205,185,185,175,155,135,115};
-    private final int[] womenBars = {185,165,155,145,135,135,125,115,95,75};
+    private final int[] maleBars = {275,255,225,205,185,175,155,135,115};
+    private final int[] womenBars = {185,165,155,145,135,125,115,95,75};
+    
+    private final int numOfMensBars = maleBars.length;
+    private final int numOfWomensBars = womenBars.length;
     
     private int numOf45s = 20;
     private int numOf35s = 16;
@@ -28,10 +31,13 @@ public class Runner {
      
     public static void main(String[] args){
         Runner runner = new Runner();
-        //List<Bar> barList = runner.populateList("forwards");
-        List<Bar> barList = runner.populateList("backwards");
-        runner.calculate(barList);
-        runner.report(barList);
+        List<Bar> barList = runner.populateList("forwards");
+        //List<Bar> barList = runner.populateList("backwards");
+        boolean isThereEnough = runner.howMuchWeightIsThere(barList);
+        if(isThereEnough){
+            runner.calculate(barList);
+            runner.report(barList);
+        }
     }
     
     public void calculate(List<Bar> barList){
@@ -148,5 +154,26 @@ public class Runner {
             }
         }
         return barList;
+    }
+
+    private boolean howMuchWeightIsThere(List<Bar> barList) {
+        double totalWeightAvailable = numOf45s*45 + numOf35s*35 + numOf25s*25 
+                + numOf15s*15 + numOf10s*10 + numOf5s*5 + numOf2andahalfs*2.5 
+                + numOfMensBars*45 + numOfWomensBars*35;
+        
+        double totalWeightNeeded = 0.0;
+        ListIterator listIter = barList.listIterator();
+    
+        while(listIter.hasNext()){
+            Bar currentBar = (Bar)listIter.next();
+            totalWeightNeeded += currentBar.getWeight();
+        }
+        boolean isThereEnough = totalWeightNeeded < totalWeightAvailable;
+        if(!isThereEnough)
+            System.err.println("Not enough Weight");
+        else
+            System.err.println("There is enough weight");
+        
+        return isThereEnough;
     }
 }
